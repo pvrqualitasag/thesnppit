@@ -1,0 +1,85 @@
+---
+title: "Documentation of TheSNPpit Code Repository"
+author: "Peter von Rohr"
+date: "2019-06-19"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
+```
+
+## Disclaimer
+The setup process, the maintainance work and all other aspects of the code repository for The SNPpit is documented here.
+
+
+## Backgroud
+After a transition of code maintainers for the system `The SNPpit`, it was required that an self-hosted git service was to be setup to be able to maintain a private remote git repository. After a short search, `gogs` (https://gogs.io/) was found as a possible solution.
+
+The gogs system was installed in a docker container using the `gogs/gogs` image from docker hub. 
+
+
+## Installation
+A simple way to install Gogs is to use the prepared docker image called `gogs/gogs`. As soon as the docker is installed, the container can be obtained from Docker Hub with 
+
+```{bash, eval=FALSE}
+docker pull gogs/gogs
+```
+
+Once the image is downloaded we can start it by the following command
+
+```{bash, eval=FALSE}
+docker run -d --name=gogs -p 10022:22 -p 10080:3000 -v $GOGSDATA:/data gogs/gogs
+```
+
+The arguments after `-p` show the mapping of the ports between container and host. The first number corresponds to a port on the host and the second number is a port in the container. The argument after `-v` specify the mapping of the volumes between the host and the container. The volumes are directory paths and the first path is on the host and the second is in the container. 
+
+The following statement can be used to check whether the docker container is running successfully. 
+
+```{bash, eval=FALSE}
+docker ps -a
+```
+
+
+## Configuration
+When the docker image `gogs` is started, the Web-UI can be started with the URL `localhost:10080`. When the Web-UI is started the first time the following configuration page is started. 
+
+```{r gogs-web-ui, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/gogs-web-ui.odg")
+knitr::include_graphics(path = "odg/gogs-web-ui.png")
+```
+
+In the productive version the following configuration is used. 
+
+```{r gogs-config, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/gogs-config.odg")
+knitr::include_graphics(path = "odg/gogs-config.png")
+```
+
+```{r gogs-config1, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/gogs-config1.odg")
+knitr::include_graphics(path = "odg/gogs-config1.png")
+```
+
+```{r gogs-config2, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/gogs-config2.odg")
+knitr::include_graphics(path = "odg/gogs-config2.png")
+```
+
+Once the configuration is completed, the `Gogs installation` buttom can be pressed. The error page that appears does not mean anything. By entering the Web-UI in the browser, the Gogs-start page comes up.
+
+```{r gogs-start-page, echo=FALSE, hook_convert_odg=TRUE, fig_path="odg"}
+#rmddochelper::use_odg_graphic(ps_path = "odg/gogs-start-page.odg")
+knitr::include_graphics(path = "odg/gogs-start-page.png")
+```
+
+In the top-right corner, we can sign in with the administrator credentials that were specified in the configuration page.
+
+
+## Backup
+The backup is done using the script /opt/bashtools/backup/backup_docker_gogs.sh which is run every day as a cronjob for user `gogs` on tsp-repo. The backup files are moved via `sftp` to the backup server. The total amount of data generated is about 100GB per year. 
+
+An open issue in the backup process is to delete the oldest files from the backup server to prevent the filling up of the backup space. 
+
+     
