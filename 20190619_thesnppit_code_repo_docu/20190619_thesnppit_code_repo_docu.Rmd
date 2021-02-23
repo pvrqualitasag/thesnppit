@@ -7,7 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-knitr::knit_hooks$set(hook_convert_odg = rmddochelper::hook_convert_odg)
+knitr::knit_hooks$set(hook_convert_odg = rmdhelp::hook_convert_odg)
 ```
 
 ## Disclaimer
@@ -30,6 +30,7 @@ docker pull gogs/gogs
 Once the image is downloaded we can start it by the following command
 
 ```{bash, eval=FALSE}
+GOGSDATA=/home/gogs/docker/gogs/data
 docker run -d --name=gogs -p 10022:22 -p 10080:3000 -v $GOGSDATA:/data gogs/gogs
 ```
 
